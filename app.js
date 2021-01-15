@@ -50,10 +50,10 @@ app.post('/signup', async (req, res) => {
         else res.send(user);
       }
       catch(err){
-        res.error(err);
+        res.send(err);
       }
     }
-    else res.error("Request's body is empty");
+    else res.send("Request's body is empty");
 })
 
 /*app.use('/', indexRouter);
