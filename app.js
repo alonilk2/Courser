@@ -20,13 +20,33 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build')));
 
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+})
+app.post('/signin', async (req, res) => {
+    var user = await db.Users.findAll({
+      where: {
+        email: req.body.email
+      }
+    });
+    console.log(user);
+    res.send(user);
+})
+app.post('/signup', async (req, res) => {
+    const [user, created] = await db.Users.findOrCreate({
+      where: { email: req.body.email },
+      defaults: {
+        email: req.body.email,
+        Username: "alon",
+        password: req.body.password}
+    });
+    console.log(created); // The boolean indicating whether this instance was just created
+    res.send(user);
+})
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
