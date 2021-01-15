@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-
+const db = require('./models/index.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -26,28 +26,28 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
-    if(req.body){
-      console.log(req.body);
-      res.send(req.body);
-    }
-    /*var user = await db.Users.findAll({
+    var user = await db.Users.findAll({
       where: {
         email: req.body.email
       }
     });
     console.log(user);
-    res.send(user);*/
+    res.send(user);
 })
 app.post('/signup', async (req, res) => {
-    const [user, created] = await db.Users.findOrCreate({
-      where: { email: req.body.email },
-      defaults: {
-        email: req.body.email,
-        Username: "alon",
-        password: req.body.password}
-    });
-    console.log(created); // The boolean indicating whether this instance was just created
-    res.send(user);
+    if(req.body){
+      const [user, created] = await db.Users.findOrCreate({
+        where: { email: req.body.email },
+        defaults: {
+          email: req.body.email,
+          Username: req.body.username,
+          password: req.body.password }
+      });
+      console.log(created); // The boolean indicating whether this instance was just created
+      if(created) res.send(0);  // 0 Means user already registered.
+      else res.send(user);
+    }
+    else res.error("Request's body is empty");
 })
 
 /*app.use('/', indexRouter);
