@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -18,19 +19,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build')));
-
+app.use(bodyParser.json());	
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
-    var user = await db.Users.findAll({
+    if(req.body){
+      console.log(req.body);
+      res.send(req.body);
+    }
+    /*var user = await db.Users.findAll({
       where: {
         email: req.body.email
       }
     });
     console.log(user);
-    res.send(user);
+    res.send(user);*/
 })
 app.post('/signup', async (req, res) => {
     const [user, created] = await db.Users.findOrCreate({
