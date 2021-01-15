@@ -36,16 +36,22 @@ app.post('/signin', async (req, res) => {
 })
 app.post('/signup', async (req, res) => {
     if(req.body){
-      const [user, created] = await db.Users.findOrCreate({
-        where: { email: req.body.email },
-        defaults: {
-          email: req.body.email,
-          Username: req.body.username,
-          password: req.body.password }
-      });
-      console.log(created); // The boolean indicating whether this instance was just created
-      if(created) res.send(0);  // 0 Means user already registered.
-      else res.send(user);
+      try{
+        const [user, created] = await db.Users.findOrCreate({
+          where: { email: req.body.email },
+          defaults: {
+            email: req.body.email,
+            First_name: req.body.firstname,
+            Last_name: req.body.lastname,
+            password: req.body.password }
+        });
+        console.log(created); // The boolean indicating whether this instance was just created
+        if(created) res.send(0);  // 0 Means user already registered.
+        else res.send(user);
+      }
+      catch(err){
+        res.error(err);
+      }
     }
     else res.error("Request's body is empty");
 })
