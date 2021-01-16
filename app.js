@@ -37,7 +37,6 @@ app.post('/signin', async (req, res) => {
 app.post('/signup', async (req, res) => {
     try{
       if(req.body){
-
         const [user, created] = await db.users.findOrCreate({
           where: { email: req.body.email },
           defaults: {
@@ -49,7 +48,7 @@ app.post('/signup', async (req, res) => {
         console.log(created); // The boolean indicating whether this instance was just created
         console.log(user);
         if(created) res.send(user);  
-        else res.sendStatus(0); // 0 Means user already registered.
+        else res.json({ message: 0, error: {}}); // 0 Means user already registered.
       }
       else res.send("Request's body is empty");
     }
