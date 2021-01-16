@@ -47,6 +47,7 @@ app.post('/signup', async (req, res) => {
             password: req.body.password }
         });
         console.log(created); // The boolean indicating whether this instance was just created
+        console.log(user);
         if(created) res.send(user);  
         else res.sendStatus(0); // 0 Means user already registered.
       }
