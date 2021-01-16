@@ -33,7 +33,7 @@ app.get('/*', (req, res) => {
 app.post('/signin', async (req, res) => {
     try{
       if(req.body){
-        const user = await db.users.findAll({
+        const user = await db.users.findOne({
           where: { email: req.body.email, password: req.body.password }
         });
         if(user) res.send(user);  
