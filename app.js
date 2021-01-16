@@ -41,8 +41,8 @@ app.post('/signup', async (req, res) => {
           where: { email: req.body.email },
           defaults: {
             email: req.body.email,
-            First_name: req.body.firstname,
-            Last_name: req.body.lastname,
+            first_name: req.body.firstname,
+            last_name: req.body.lastname,
             password: req.body.password }
         });
         console.log(created); // The boolean indicating whether this instance was just created
