@@ -26,7 +26,7 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
-    var user = await db.Users.findAll({
+    var user = await db.users.findAll({
       where: {
         email: req.body.email
       }
@@ -37,7 +37,7 @@ app.post('/signin', async (req, res) => {
 app.post('/signup', async (req, res) => {
     if(req.body){
       try{
-        const [user, created] = await db.Users.findOrCreate({
+        const [user, created] = await db.users.findOrCreate({
           where: { email: req.body.email },
           defaults: {
             email: req.body.email,
