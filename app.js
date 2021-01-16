@@ -31,13 +31,19 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
-    var user = await db.users.findAll({
-      where: {
-        email: req.body.email
+    try{
+      if(req.body){
+        const user = await db.users.findAll({
+          where: { email: req.body.email, password: req.body.password }
+        });
+        if(user) res.send(user);  
+        else res.json({ message: 0, error: {}}); // 0 Means user not found.
       }
-    });
-    console.log(user);
-    res.send(user);
+      else res.send("Request's body is empty");
+    }
+    catch(err){
+      res.send(err);
+    }
 })
 app.post('/signup', async (req, res) => {
     try{
