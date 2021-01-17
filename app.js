@@ -115,7 +115,7 @@ app.post('/signup', async (req, res) => {
     }
 })
 
-app.get('/fetch_categories', async (req, res) => {
+app.post('/fetch_categories', async (req, res) => {
   try{
       const categories = await db.Categories.findAll();
       res.json({
