@@ -113,6 +113,22 @@ app.post('/signup', async (req, res) => {
     }
 })
 
+app.get('/fetch_categories', async (req, res) => {
+  try{
+      const categories = await db.categories.findAll();
+      res.json({
+        success: true,
+        result: categories
+      })
+  } 
+  catch(err){
+      res.json({
+        success: false,
+        error: err
+      })
+  }
+})
+
 /*app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
