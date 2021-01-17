@@ -28,7 +28,8 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
     next();
 });
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(express.static('public'));
+
 const jwtMW = exjwt({
   secret: 'manyplacees are awsome 4now',
   algorithms: ['RS256']
