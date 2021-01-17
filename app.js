@@ -30,6 +30,7 @@ app.use(function (req, res, next) {
 });
 const jwtMW = exjwt({
   secret: 'manyplacees are awsome 4now',
+  algorithms: ['RS256']
 });
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -48,8 +49,8 @@ app.post('/signin', async (req, res) => {
           );
           res.json({
             success: true,
-            error: null
-            token,
+            error: null,
+            tok,
           });
         }
         else res.json({ 
@@ -88,8 +89,8 @@ app.post('/signup', async (req, res) => {
           );
           res.json({
             success: true,
-            error: null
-            token,
+            error: null,
+            tok
           });
         }
         else res.json({
