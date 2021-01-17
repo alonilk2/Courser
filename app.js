@@ -28,12 +28,13 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
     next();
 });
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(express.static('public'));
+
 const jwtMW = exjwt({
   secret: 'manyplacees are awsome 4now',
   algorithms: ['RS256']
 });
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
@@ -114,7 +115,7 @@ app.post('/signup', async (req, res) => {
     }
 })
 
-app.get('/fetch_categories', async (req, res) => {
+app.post('/fetch_categories', async (req, res) => {
   try{
       const categories = await db.Categories.findAll();
       res.json({
