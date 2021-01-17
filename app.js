@@ -7,7 +7,8 @@ var bodyParser = require('body-parser');
 const db = require('./models/index.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+const exjwt = require('express-jwt');
+const jwt = require('jsonwebtoken');
 var app = express();
 
 // view engine setup
@@ -27,6 +28,9 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
     next();
 });
+const jwtMW = exjwt({
+  secret: 'manyplacees are awsome 4now',
+});
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
@@ -36,13 +40,33 @@ app.post('/signin', async (req, res) => {
         const user = await db.users.findOne({
           where: { email: req.body.email, password: req.body.password }
         });
-        if(user) res.send(user);  
-        else res.json({ message: 0, error: {}}); // 0 Means user not found.
+        if(user) {
+          let tok = jwt.sign(
+            {user},
+            'manyplacees are awsome 4now',
+            {expiresIn: 129600}
+          );
+          res.json({
+            success: true,
+            error: null
+            token,
+          });
+        }
+        else res.json({ 
+          success: false,
+          error: 0
+        }); // 0 Means user not found.
       }
-      else res.send("Request's body is empty");
+      else res.json({
+        success: false,
+        error: 1  // 1 Means no request body
+      })
     }
     catch(err){
-      res.send(err);
+      res.json({
+        success:false,
+        error: err
+      })
     }
 })
 app.post('/signup', async (req, res) => {
@@ -56,13 +80,33 @@ app.post('/signup', async (req, res) => {
             last_name: req.body.lastname,
             password: req.body.password }
         });
-        if(created) res.send(user);  
-        else res.json({ message: 0, error: {}}); // 0 Means user already registered.
+        if(created) {
+          let tok = jwt.sign(
+            {user},
+            'manyplacees are awsome 4now',
+            {expiresIn: 129600}
+          );
+          res.json({
+            success: true,
+            error: null
+            token,
+          });
+        }
+        else res.json({
+          success: false,
+          error: 0 // 0 Means user already registered.
+        }); 
       }
-      else res.send("Request's body is empty");
+      else res.json({
+        success: false,
+        error: 1  // 1 Means no request body
+      })
     }
     catch(err){
-      res.send(err);
+      res.json({
+        success:false,
+        error: err
+      })
     }
 })
 
