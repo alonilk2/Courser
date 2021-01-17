@@ -122,6 +122,7 @@ app.get('/fetch_categories', async (req, res) => {
       })
   } 
   catch(err){
+      console.log(err);
       res.json({
         success: false,
         error: err
