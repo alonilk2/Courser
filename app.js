@@ -87,7 +87,7 @@ app.post('/signup', async (req, res) => {
             'manyplacees are awsome 4now',
             {expiresIn: 129600}
           );
-          console.log(user);
+          console.log(user.dataValue);
           res.json({
             success: true,
             error: null,
