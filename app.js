@@ -115,7 +115,7 @@ app.post('/signup', async (req, res) => {
 
 app.get('/fetch_categories', async (req, res) => {
   try{
-      const categories = await db.categories.findAll();
+      const categories = await db.Categories.findAll();
       res.json({
         success: true,
         result: categories
