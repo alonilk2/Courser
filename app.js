@@ -50,9 +50,11 @@ const jwtMW = exjwt({
   secret: 'manyplacees are awsome 4now',
   algorithms: ['RS256']
 });
+
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
+
 app.post('/signin', async (req, res) => {
     try{
       if(req.body){
