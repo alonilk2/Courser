@@ -39,13 +39,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const mailOptions = {
-  from: 'techstar1team@gmail.com',
-  to: 'alonilk2@gmail.com',
-  subject: 'Invoices due',
-  text: 'Dudes, we really need your money.'
-};
-
 const jwtMW = exjwt({
   secret: 'manyplacees are awsome 4now',
   algorithms: ['RS256']
@@ -53,6 +46,48 @@ const jwtMW = exjwt({
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+})
+
+app.post('/sendMail', async (req, res) => {
+  if(req.body) {
+    try {
+      const user = await db.users.findOne({
+        where: { email: req.body.email }
+      })
+      if(user){
+        const mailOptions = {
+          from: 'techstar1team@gmail.com',
+          to: req.body.email,
+          subject: 'Invoices due',
+          text: 'Dudes, we really need your money.'
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+            res.json({
+              error: error,
+              status: 0
+            })
+          } else {
+            res.json({
+              success: true,
+              message: info
+            })
+          }
+        });
+      }
+    } catch (error) {
+      res.json({
+        error: error,
+        status: 1
+      })
+    }
+  }
+  else res.json({
+    error: "error",
+    status: 2
+  })
+
 })
 
 app.post('/signin', async (req, res) => {
