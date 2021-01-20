@@ -89,7 +89,41 @@ app.post('/sendMail', async (req, res) => {
   })
 
 })
+app.post('/updatePass', async (req, res) => {
+  if(req.body) {
+    try {
+      const user = await db.users.findOne({
+        where: { email: req.body.email }
+      })
+      if(req.body.oldpass == user.data.password) {
+        await db.users.update({ password: req.body.newpass, {
+          where: { email: req.body.email }
+        }})
+        res.json({
+          success: true
+        })
+      }
+      else {
+        res.json({
+          error: true,
+          success: false,
+          status: 1
+        })
+      }
+      // ~~~~~~~~ ADD EMAIL
+    } catch (error) {
+      res.json({
+        error: error,
+        status: 0
+      })
+    }
+  }
+  else res.json({
+    error: "error",
+    status: 2
+  })
 
+})
 app.post('/signin', async (req, res) => {
     try{
       if(req.body){
