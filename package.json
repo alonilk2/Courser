@@ -19,5 +19,18 @@
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"
-  }
+  },
+  "description": "",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alonilk2/Techstar1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alonilk2/Techstar1/issues"
+  },
+  "homepage": "https://github.com/alonilk2/Techstar1#readme"
 }
