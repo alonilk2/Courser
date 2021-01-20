@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const exjwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
 var app = express();
 
 // view engine setup
@@ -30,11 +31,33 @@ app.use(function (req, res, next) {
 });
 app.use(express.static('public'));
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'techstar1team@gmail.com',
+    pass: 'tech123!@!' // naturally, replace both with your real credentials or an application-specific password
+  }
+});
+
+const mailOptions = {
+  from: 'techstar1team@gmail.com',
+  to: 'alonilk2@gmail.com',
+  subject: 'Invoices due',
+  text: 'Dudes, we really need your money.'
+};
+
 const jwtMW = exjwt({
   secret: 'manyplacees are awsome 4now',
   algorithms: ['RS256']
 });
 app.get('/*', (req, res) => {
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    })
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
