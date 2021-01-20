@@ -58,8 +58,8 @@ app.post('/sendMail', async (req, res) => {
         const mailOptions = {
           from: 'techstar1team@gmail.com',
           to: req.body.email,
-          subject: 'Invoices due',
-          text: 'Dudes, we really need your money.'
+          subject: req.body.subject,
+          text: req.body.text
         };
         transporter.sendMail(mailOptions, function(error, info){
           if (error) {
@@ -143,6 +143,26 @@ app.post('/signup', async (req, res) => {
             'manyplacees are awsome 4now',
             {expiresIn: 129600}
           );
+          const mailOptions = {
+            from: 'techstar1team@gmail.com',
+            to: req.body.email,
+            subject: "Welcome my friend!",
+            text: "Enjoy your new tech stars !!"
+          };
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+              res.json({
+                error: error,
+                status: 0
+              })
+            } else {
+              res.json({
+                success: true,
+                message: info
+              })
+            }
+          });
           res.json({
             success: true,
             error: null,
