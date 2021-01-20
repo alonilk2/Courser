@@ -51,13 +51,6 @@ const jwtMW = exjwt({
   algorithms: ['RS256']
 });
 app.get('/*', (req, res) => {
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-    })
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
 app.post('/signin', async (req, res) => {
