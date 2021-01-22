@@ -29,6 +29,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
     next();
 });
+
 app.use(express.static('public'));
 
 const transporter = nodemailer.createTransport({
@@ -87,8 +88,38 @@ app.post('/sendMail', async (req, res) => {
     error: "error",
     status: 2
   })
-
 })
+
+app.post('/updateDet', async (req, res) => {
+  if(req.body) {
+      try {
+      const user = await db.users.findOne({
+          where: { email: req.body.email }
+      })
+      await db.users.update({
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            phonenumber: req.body.phonenumber,
+            country: req.body.country,
+            city: req.body.city
+      }, { where: { email: req.body.email }
+      })
+      res.json({
+          success: true
+      })
+    } catch (error) {
+      res.json({
+          error: error,
+          status: 0
+      })
+    }
+  }
+  else res.json({
+      error: "error",
+      status: 2
+  })
+})
+
 app.post('/updatePass', async (req, res) => {
   if(req.body) {
     try {
@@ -122,8 +153,8 @@ app.post('/updatePass', async (req, res) => {
     error: "error",
     status: 2
   })
-
 })
+
 app.post('/signin', async (req, res) => {
     try{
       if(req.body){
@@ -160,6 +191,7 @@ app.post('/signin', async (req, res) => {
       })
     }
 })
+
 app.post('/signup', async (req, res) => {
     try{
       if(req.body){
