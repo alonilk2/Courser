@@ -91,8 +91,8 @@ app.post('/sendMail', async (req, res) => {
 })
 
 app.post('/updateDet', async (req, res) => {
-  if(req.body) {
-      try {
+  try {
+    if(req.body) {
       const user = await db.users.findOne({
           where: { email: req.body.email }
       })
@@ -107,22 +107,22 @@ app.post('/updateDet', async (req, res) => {
       res.json({
           success: true
       })
-    } catch (error) {
-      res.json({
-          error: error,
-          status: 0
-      })
     }
+    else res.json({
+        error: "error",
+        status: 2
+    })
+  } catch (error) {
+    res.json({
+        error: error,
+        status: 0
+    })
   }
-  else res.json({
-      error: "error",
-      status: 2
-  })
 })
 
 app.post('/updatePass', async (req, res) => {
-  if(req.body) {
-    try {
+  try {
+    if(req.body) {
       const user = await db.users.findOne({
         where: { email: req.body.email }
       })
@@ -146,17 +146,17 @@ app.post('/updatePass', async (req, res) => {
         })
       }
       // ~~~~~~~~ ADD EMAIL
-    } catch (error) {
-      res.json({
-        error: error,
-        status: 0
-      })
     }
+    else res.json({
+      error: "error",
+      status: 2
+    })
+  } catch (error) {
+    res.json({
+      error: error,
+      status: 0
+    })
   }
-  else res.json({
-    error: "error",
-    status: 2
-  })
 })
 
 app.post('/signin', async (req, res) => {
