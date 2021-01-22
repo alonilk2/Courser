@@ -128,14 +128,12 @@ app.post('/updatePass', async (req, res) => {
       })
       console.log(user.data.password)
       if(req.body.oldpass == user.data.password) {
+        console.log("success: "+ req.body.oldpass + "   +" + req.body.newpass);
         await User.update({ password: req.body.newpass }, {
           where: {
             email: req.body.email
           }
         });
-        await db.users.update({}, {
-          where: {  }
-        })
         res.json({
           success: true
         })
