@@ -93,17 +93,20 @@ app.post('/sendMail', async (req, res) => {
 app.post('/updateDet', async (req, res) => {
   try {
     if(req.body) {
+      console.log("update det: ");
       const user = await db.users.findOne({
           where: { email: req.body.email }
       })
-      await db.users.update({
+      console.log(user.dataValues.password)
+      if(user) {
+        await user.update({
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             phonenumber: req.body.phonenumber,
             country: req.body.country,
             city: req.body.city
-      }, { where: { email: req.body.email }
-      })
+        })
+      }
       res.json({
           success: true
       })
