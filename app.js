@@ -164,10 +164,10 @@ app.post('/updatePass', async (req, res) => {
 
 app.post('/signin', async (req, res) => {
   try {
-    await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
-      const user = await db.users.findOne({
-        where: { email: req.body.email, password: hash }
-      });
+    const user = await db.users.findOne({
+      where: { email: req.body.email }
+    });
+    await bcrypt.compare(req.body.password, user.dataValues.password, async function(err, result) {
       if(user) {
         let tok = jwt.sign(
           {user},
