@@ -126,8 +126,8 @@ app.post('/updatePass', async (req, res) => {
       const user = await db.users.findOne({
         where: { email: req.body.email }
       })
-      console.log(user.data.password)
-      if(req.body.oldpass == user.data.password) {
+      console.log(user)
+      /*if(req.body.oldpass == user.data.password) {
         console.log("success: "+ req.body.oldpass + "   +" + req.body.newpass);
         await User.update({ password: req.body.newpass }, {
           where: {
@@ -145,12 +145,12 @@ app.post('/updatePass', async (req, res) => {
           status: 1
         })
       }
-      // ~~~~~~~~ ADD EMAIL
+      */// ~~~~~~~~ ADD EMAIL
     }
-    else res.json({
+    /*else res.json({
       error: "error",
       status: 2
-    })
+    })*/
   } catch (err) {
     console.log(err);
     res.send(err)
