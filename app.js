@@ -10,6 +10,8 @@ var usersRouter = require('./routes/users');
 const exjwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 var app = express();
 
 // view engine setup
@@ -129,23 +131,25 @@ app.post('/updatePass', async (req, res) => {
       const user = await db.users.findOne({
         where: { email: req.body.email }
       })
-      if(req.body.oldpass == user.dataValues.password) {
-        await user.update({ password: req.body.newpass }, {
-          where: {
-            email: req.body.email
-          }
-        });
-        res.json({
-          success: true
-        })
-      }
-      else {
-        res.json({
-          error: true,
-          success: false,
-          status: 1
-        })
-      }
+      bcrypt.compare(req.body.oldpass, user.dataValues.password, function(err, result) {
+        if(result == true){
+          await user.update({ password: req.body.newpass }, {
+            where: {
+              email: req.body.email
+            }
+          });
+          res.json({
+            success: true
+          })
+        }
+        else if(err){
+          res.json({
+            error: err,
+            success: false,
+            status: 1
+          })
+        }
+      });
       // ~~~~~~~~ ADD EMAIL
     }
     else res.json({
@@ -161,31 +165,33 @@ app.post('/updatePass', async (req, res) => {
 app.post('/signin', async (req, res) => {
     try{
       if(req.body){
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
         const user = await db.users.findOne({
-          where: { email: req.body.email, password: req.body.password }
-        });
-        if(user) {
-          let tok = jwt.sign(
-            {user},
-            'manyplacees are awsome 4now',
-            {expiresIn: 129600}
-          );
-          res.json({
-            success: true,
-            error: null,
-            user: user,
-            tok,
+          where: { email: req.body.email, password: hash }
           });
+          if(user) {
+            let tok = jwt.sign(
+              {user},
+              'manyplacees are awsome 4now',
+              {expiresIn: 129600}
+            );
+            res.json({
+              success: true,
+              error: null,
+              user: user,
+              tok,
+            });
+          }
+          else res.json({ 
+            success: false,
+            error: 0
+          }); // 0 Means user not found.
         }
-        else res.json({ 
+        else res.json({
           success: false,
-          error: 0
-        }); // 0 Means user not found.
-      }
-      else res.json({
-        success: false,
-        error: 1  // 1 Means no request body
-      })
+          error: 1  // 1 Means no request body
+        })
+      });
     }
     catch(err){
       res.json({
@@ -198,51 +204,53 @@ app.post('/signin', async (req, res) => {
 app.post('/signup', async (req, res) => {
     try{
       if(req.body){
-        const [user, created] = await db.users.findOrCreate({
-          where: { email: req.body.email },
-          defaults: {
-            email: req.body.email,
-            first_name: req.body.firstname,
-            last_name: req.body.lastname,
-            password: req.body.password }
+        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+          const [user, created] = await db.users.findOrCreate({
+            where: { email: req.body.email },
+            defaults: {
+              email: req.body.email,
+              first_name: req.body.firstname,
+              last_name: req.body.lastname,
+              password: hash }
+          });
+          if(created) {
+            let tok = jwt.sign(
+              {user},
+              'manyplacees are awsome 4now',
+              {expiresIn: 129600}
+            );
+            const mailOptions = {
+              from: 'techstar1team@gmail.com',
+              to: req.body.email,
+              subject: "Welcome my friend!",
+              text: "Enjoy your new tech stars !!"
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                console.log(error);
+                res.json({
+                  error: error,
+                  status: 0
+                })
+              } else {
+                res.json({
+                  success: true,
+                  message: info
+                })
+              }
+            });
+            res.json({
+              success: true,
+              error: null,
+              user: user,
+              tok
+            });
+          }
+          else res.json({
+            success: false,
+            error: 0 // 0 Means user already registered.
+          }); 
         });
-        if(created) {
-          let tok = jwt.sign(
-            {user},
-            'manyplacees are awsome 4now',
-            {expiresIn: 129600}
-          );
-          const mailOptions = {
-            from: 'techstar1team@gmail.com',
-            to: req.body.email,
-            subject: "Welcome my friend!",
-            text: "Enjoy your new tech stars !!"
-          };
-          transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-              res.json({
-                error: error,
-                status: 0
-              })
-            } else {
-              res.json({
-                success: true,
-                message: info
-              })
-            }
-          });
-          res.json({
-            success: true,
-            error: null,
-            user: user,
-            tok
-          });
-        }
-        else res.json({
-          success: false,
-          error: 0 // 0 Means user already registered.
-        }); 
       }
       else res.json({
         success: false,
