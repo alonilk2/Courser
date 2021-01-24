@@ -168,7 +168,7 @@ app.post('/signin', async (req, res) => {
       where: { email: req.body.email }
     });
     await bcrypt.compare(req.body.password, user.dataValues.password, async function(err, result) {
-      if(user) {
+      if(result == true) {
         let tok = jwt.sign(
           {user},
           'manyplacees are awsome 4now',
