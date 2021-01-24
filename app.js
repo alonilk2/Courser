@@ -150,10 +150,8 @@ app.post('/updatePass', async (req, res) => {
       status: 2
     })
   } catch (err) {
-    res.json({
-      error: err,
-      status: 0
-    })
+    console.log(err);
+    res.send(err);
   }
 })
 
