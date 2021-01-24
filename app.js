@@ -131,7 +131,7 @@ app.post('/updatePass', async (req, res) => {
       const user = await db.users.findOne({
         where: { email: req.body.email }
       })
-      bcrypt.compare(req.body.oldpass, user.dataValues.password, function(err, result) {
+      await bcrypt.compare(req.body.oldpass, user.dataValues.password, async function(err, result) {
         if(result == true){
           await user.update({ password: req.body.newpass }, {
             where: {
@@ -163,48 +163,40 @@ app.post('/updatePass', async (req, res) => {
 })
 
 app.post('/signin', async (req, res) => {
-    try{
-      if(req.body){
-        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-        const user = await db.users.findOne({
-          where: { email: req.body.email, password: hash }
-          });
-          if(user) {
-            let tok = jwt.sign(
-              {user},
-              'manyplacees are awsome 4now',
-              {expiresIn: 129600}
-            );
-            res.json({
-              success: true,
-              error: null,
-              user: user,
-              tok,
-            });
-          }
-          else res.json({ 
-            success: false,
-            error: 0
-          }); // 0 Means user not found.
-        }
-        else res.json({
-          success: false,
-          error: 1  // 1 Means no request body
-        })
+  try {
+    await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+      const user = await db.users.findOne({
+        where: { email: req.body.email, password: hash }
       });
-    }
-    catch(err){
-      res.json({
-        success:false,
-        error: err
-      })
-    }
-})
-
+      if(user) {
+        let tok = jwt.sign(
+          {user},
+          'manyplacees are awsome 4now',
+          {expiresIn: 129600}
+        );
+        res.json({
+          success: true,
+          error: null,
+          user: user,
+          tok,
+        });
+      }
+      else res.json({ 
+        success: false,
+        error: 0
+      }); // 0 Means user not found.
+    });
+  } catch (error) {
+    res.json({
+      success:false,
+      error: error
+    })
+  }
+});
 app.post('/signup', async (req, res) => {
     try{
       if(req.body){
-        bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+        await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
           const [user, created] = await db.users.findOrCreate({
             where: { email: req.body.email },
             defaults: {
