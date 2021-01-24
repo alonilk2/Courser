@@ -151,11 +151,9 @@ app.post('/updatePass', async (req, res) => {
       error: "error",
       status: 2
     })
-  } catch (error) {
-    res.json({
-      error: JSON.parse(error),
-      status: 0
-    })
+  } catch (err) {
+    console.log(err);
+    res.send(err)
   }
 })
 
