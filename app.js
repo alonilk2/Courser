@@ -127,7 +127,7 @@ app.post('/updatePass', async (req, res) => {
         where: { email: req.body.email }
       })
       if(req.body.oldpass == user.dataValues.password) {
-        await User.update({ password: req.body.newpass }, {
+        await user.update({ password: req.body.newpass }, {
           where: {
             email: req.body.email
           }
