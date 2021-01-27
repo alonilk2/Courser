@@ -133,6 +133,7 @@ app.post('/updatePass', async (req, res) => {
       const user = await db.users.findOne({
         where: { email: req.body.email }
       })
+      console.log(user);
       await bcrypt.compare(req.body.oldpass, user.dataValues.password, async function(err, result) {
         if(result == true){
           await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
