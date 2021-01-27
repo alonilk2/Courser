@@ -135,33 +135,35 @@ app.post('/updatePass', async (req, res) => {
       })
       await bcrypt.compare(req.body.oldpass, user.dataValues.password, async function(err, result) {
         if(result == true){
-          await user.update({ password: req.body.newpass }, {
-            where: {
-              email: req.body.email
-            }
-          });
-          const mailOptions = {
-            from: 'techstar1team@gmail.com',
-            to: req.body.email,
-            subject: "Your Techstar's account password has changed",
-            text: "Was it you ? if not, please contact us immediately"
-          };
-          transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-              res.json({
-                error: error,
-                status: 0
-              })
-            } else {
-              res.json({
-                success: true,
-                message: info
-              })
-            }
-          });
-          res.json({
-            success: true
+          await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+            await user.update({ password: hash }, {
+              where: {
+                email: req.body.email
+              }
+            });
+            const mailOptions = {
+              from: 'techstar1team@gmail.com',
+              to: req.body.email,
+              subject: "Your Techstar's account password has changed",
+              text: "Was it you ? if not, please contact us immediately"
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                console.log(error);
+                res.json({
+                  error: error,
+                  status: 0
+                })
+              } else {
+                res.json({
+                  success: true,
+                  message: info
+                })
+              }
+            });
+            res.json({
+              success: true
+            })
           })
         }
         else if(err){
