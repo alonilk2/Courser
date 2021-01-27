@@ -296,7 +296,7 @@ app.post('/fetch_categories', async (req, res) => {
   }
 })
 
-app.post('/sendMail', async (req, res) => {
+/*app.post('/sendMail', async (req, res) => {
   try {
     const user = await db.users.findOne({
       where: { email: req.body.email }
@@ -346,7 +346,7 @@ app.post('/sendMail', async (req, res) => {
       error: error
     })
   }
-})
+})*/
 
 /*app.use('/', indexRouter);
 app.use('/users', usersRouter);
