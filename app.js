@@ -12,6 +12,8 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const crypto = require('crypto');
+
 var app = express();
 
 // view engine setup
@@ -291,6 +293,58 @@ app.post('/fetch_categories', async (req, res) => {
         success: false,
         error: err
       })
+  }
+})
+
+app.post('/sendMail', async (req, res) => {
+  try {
+    const user = await db.users.findOne({
+      where: { email: req.body.email }
+    });
+    const userrecovery = db.passrecovery.findOne({ where: {id: user.id}});
+    if(userrecovery){
+      userrecovery.destroy({
+        where: {
+          id: userrecovery.id
+        }
+      })
+    }
+    token = crypto.randomBytes(32).toString('hex');
+    bcrypt.hash(token, null, null, async function (err, hash) {
+      const recoveryentry = await db.passrecovery.create({
+        id: user.id,
+        token: token
+      }) 
+      const mailOptions = {
+        from: 'techstar1team@gmail.com',
+        to: req.body.email,
+        subject: req.body.subject,
+        html: '<h4><b>Reset Password</b></h4>' +
+              '<p>To reset your password, complete this form:</p>' +
+              '<a href=https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '">' + 'https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '</a>' +
+              '<br><br>' +
+              '<p>--Team</p>'
+      };
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+          res.json({
+            error: error,
+            status: 0
+          })
+        } else {
+          res.json({
+            success: true,
+            message: info
+          })
+        }
+      });
+    }
+  } catch (error) {
+    res.json({
+      success:false,
+      error: error
+    })
   }
 })
 
