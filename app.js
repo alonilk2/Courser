@@ -136,7 +136,7 @@ app.post('/updatePass', async (req, res) => {
       console.log(user);
       await bcrypt.compare(req.body.oldpass, user.dataValues.password, async function(err, result) {
         if(result == true){
-          await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+          await bcrypt.hash(req.body.newpass, saltRounds, async function(err, hash) {
             await user.update({ password: hash }, {
               where: {
                 email: req.body.email
