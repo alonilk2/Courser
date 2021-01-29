@@ -314,35 +314,40 @@ app.post('/forgotPass', async (req, res) => {
     }
     token = crypto.randomBytes(32).toString('hex');
     console.log("token:" + token);
-    bcrypt.hash(token, null, null, async function (err, hash) {
-      const recoveryentry = await db.passrecovery.create({
-        userid: user.id,
-        token: token
-      }) 
-      console.log(recoveryentry);
-      const mailOptions = {
-        from: 'techstar1team@gmail.com',
-        to: req.body.email,
-        subject: req.body.subject,
-        html: '<h4><b>Reset Password</b></h4>' +
-              '<p>To reset your password, complete this form:</p>' +
-              '<a href=https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '">' + 'https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '</a>' +
-              '<br><br>' +
-              '<p>--Team</p>'
-      };
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-          res.json({
-            error: error,
-            status: 0
-          })
-        } else {
-          res.json({
-            success: true
-          })
-        }
-      });
+    bcrypt.hash(token, saltRounds, async function (err, hash) {
+      try {
+        const recoveryentry = await db.passrecovery.create({
+          userid: user.id,
+          token: token
+        }) 
+        console.log(recoveryentry);
+        const mailOptions = {
+          from: 'techstar1team@gmail.com',
+          to: req.body.email,
+          subject: req.body.subject,
+          html: '<h4><b>Reset Password</b></h4>' +
+                '<p>To reset your password, complete this form:</p>' +
+                '<a href=https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '">' + 'https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '</a>' +
+                '<br><br>' +
+                '<p>--Team</p>'
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+            res.json({
+              error: error,
+              status: 0
+            })
+          } else {
+            res.json({
+              success: true
+            })
+          }
+        });
+      } catch (error) {
+        console.log(error)
+        res.send(error)
+      }
     });
   } catch (error) {
     console.log(error)
