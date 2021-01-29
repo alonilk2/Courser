@@ -299,25 +299,27 @@ app.post('/fetch_categories', async (req, res) => {
   }
 })
 
-/*app.post('/sendMail', async (req, res) => {
+app.post('/forgotPass', async (req, res) => {
   try {
     const user = await db.users.findOne({
       where: { email: req.body.email }
     });
-    const userrecovery = db.passrecovery.findOne({ where: {id: user.id}});
+    const userrecovery = db.passrecovery.findOne({ where: {userid: user.dataValues.id}});
     if(userrecovery){
       userrecovery.destroy({
         where: {
-          id: userrecovery.id
+          userid: userrecovery.dataValues.id
         }
       })
     }
     token = crypto.randomBytes(32).toString('hex');
+    console.log("token:" + token);
     bcrypt.hash(token, null, null, async function (err, hash) {
       const recoveryentry = await db.passrecovery.create({
-        id: user.id,
+        userid: user.id,
         token: token
       }) 
+      console.log(recoveryentry);
       const mailOptions = {
         from: 'techstar1team@gmail.com',
         to: req.body.email,
@@ -337,19 +339,18 @@ app.post('/fetch_categories', async (req, res) => {
           })
         } else {
           res.json({
-            success: true,
-            message: info
+            success: true
           })
         }
       });
-    }
+    });
   } catch (error) {
     res.json({
       success:false,
       error: error
     })
   }
-})*/
+})
 
 /*app.use('/', indexRouter);
 app.use('/users', usersRouter);
