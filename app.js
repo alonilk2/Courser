@@ -305,10 +305,11 @@ app.post('/forgotPass', async (req, res) => {
       where: { email: req.body.email }
     });
     const userrecovery = db.passrecovery.findOne({ where: {userid: user.dataValues.id}});
+    console.log(userrecovery.dataValues)
     if(userrecovery){
       userrecovery.destroy({
         where: {
-          userid: userrecovery.dataValues.id
+          userid: userrecovery.dataValues.userid
         }
       })
     }
