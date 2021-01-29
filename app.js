@@ -345,10 +345,8 @@ app.post('/forgotPass', async (req, res) => {
       });
     });
   } catch (error) {
-    res.json({
-      success:false,
-      error: error
-    })
+    console.log(error)
+    res.send(error)
   }
 })
 
