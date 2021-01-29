@@ -306,8 +306,8 @@ app.post('/storePassword', async (req, res) => {
     const userrecovery = await db.passrecovery.findOne({ where: {userid: userId}});
     if(userrecovery.dataValues){
       try {
-        await bcrypt.compare(token, userrecovery.dataValues.token, async function (err, res) {
-          if(res){
+        await bcrypt.compare(token, userrecovery.dataValues.token, async function (err, result) {
+          if(result){
             await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
               await db.users.update({ password: hash }, { where: { id: userId }});
               userrecovery.destroy({
