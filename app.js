@@ -303,25 +303,30 @@ app.post('/storePassword', async (req, res) => {
     const userId = req.body.userid
     const token = req.body.token
     const password = req.body.newpass
-    const userrecovery = db.passrecovery.findOne({ where: {userid: userId}});
+    const userrecovery = await db.passrecovery.findOne({ where: {userid: userId}});
     if(userrecovery.dataValues){
-      await bcrypt.compare(token, userrecovery.dataValues.token, async function (err, res) {
-        if(res){
-          await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
-            await db.users.update({ password: hash }, { where: { id: userId }});
-            userrecovery.destroy({
-              where: {
-                userid: userId
-              }
+      try {
+        await bcrypt.compare(token, userrecovery.dataValues.token, async function (err, res) {
+          if(res){
+            await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+              await db.users.update({ password: hash }, { where: { id: userId }});
+              userrecovery.destroy({
+                where: {
+                  userid: userId
+                }
+              })
+              res.json({ success: true })
             })
-            res.json({ success: true })
-          })
-        }
-        else {
-          console.log(err); 
-          res.json({ success: false, error: err})
-        }
-      })
+          }
+          else {
+            console.log(err); 
+            res.json({ success: false, error: err})
+          }
+        })
+      } catch (error) {
+        console.log(error);
+        res.json({success: false, error: error})
+      }
     }
   } catch (error) {
     console.log(error); 
