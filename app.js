@@ -306,9 +306,9 @@ app.post('/storePassword', async (req, res) => {
     const userrecovery = await db.passrecovery.findOne({ where: {userid: userId}});
     if(userrecovery.dataValues){
       try {
-        await bcrypt.compare(token, userrecovery.dataValues.token, async function (err, result) {
+        await bcrypt.compare(token, userrecovery.dataValues.token, async function (error1, result) {
           if(result){
-            await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+            await bcrypt.hash(req.body.password, saltRounds, async function(error2, hash) {
               await db.users.update({ password: hash }, { where: { id: userId }});
               userrecovery.destroy({
                 where: {
@@ -319,18 +319,18 @@ app.post('/storePassword', async (req, res) => {
             })
           }
           else {
-            console.log(err); 
-            res.json({ success: false, error: err})
+            console.log(error1); 
+            res.json({ success: false, error: 1})
           }
         })
-      } catch (error) {
-        console.log(error);
-        res.json({success: false, error: error})
+      } catch (error0) {
+        console.log(error0);
+        res.json({success: false, error: 2})
       }
     }
   } catch (error) {
     console.log(error); 
-    res.json({ success: false, error: err})
+    res.json({ success: false, error: 3})
   }
 });
 app.post('/forgotPass', async (req, res) => {
