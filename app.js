@@ -307,15 +307,22 @@ app.post('/storePassword', async (req, res) => {
     if(userrecovery.dataValues){
       try {
         await bcrypt.compare(token, userrecovery.dataValues.token, async function (error1, result) {
-          await bcrypt.hash(req.body.password, saltRounds, async function(error2, hash) {
-            await db.users.update({ password: hash }, { where: { id: userId }});
-            userrecovery.destroy({
-              where: {
-                userid: userId
-              }
+          console.log(token + " AND    " + userrecovery.dataValues.token)
+          if(result){
+            await bcrypt.hash(req.body.password, saltRounds, async function(error2, hash) {
+              await db.users.update({ password: hash }, { where: { id: userId }});
+              userrecovery.destroy({
+                where: {
+                  userid: userId
+                }
+              })
+              res.json({ success: true })
             })
-            res.json({ success: true })
-          })
+          }
+          else {
+            console.log(error1); 
+            res.json({ success: false, error: 1})
+          }
         })
       } catch (error0) {
         console.log(error0);
@@ -346,7 +353,7 @@ app.post('/forgotPass', async (req, res) => {
       try {
         const recoveryentry = await db.passrecovery.create({
           userid: user.id,
-          token: token
+          token: hash
         }) 
         console.log(recoveryentry);
         const mailOptions = {
