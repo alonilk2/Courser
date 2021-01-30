@@ -309,7 +309,7 @@ app.post('/storePassword', async (req, res) => {
         await bcrypt.compare(token, userrecovery.dataValues.token, async function (error1, result) {
           console.log(token + " AND    " + userrecovery.dataValues.token)
           if(result){
-            await bcrypt.hash(req.body.password, saltRounds, async function(error2, hash) {
+            await bcrypt.hash(password, saltRounds, async function(error2, hash) {
               await db.users.update({ password: hash }, { where: { id: userId }});
               userrecovery.destroy({
                 where: {
