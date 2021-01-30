@@ -175,7 +175,8 @@ app.post('/updatePass', async (req, res) => {
           })
         }
       });
-      // ~~~~~~~~ ADD EMAIL
+      
+//***************        
     }
     else res.json({
       error: "error",
@@ -239,7 +240,7 @@ app.post('/signup', async (req, res) => {
             const mailOptions = {
               from: 'techstar1team@gmail.com',
               to: req.body.email,
-              subject: "Welcome my friend!",
+              subject: "Welcome To Techstars",
               text: "Enjoy your new tech stars !!"
             };
             transporter.sendMail(mailOptions, function(error, info){
