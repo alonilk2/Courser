@@ -362,7 +362,7 @@ app.post('/forgotPass', async (req, res) => {
           subject: req.body.subject,
           html: '<h4><b>Reset Password</b></h4>' +
                 '<p>To reset your password, complete this form:</p>' +
-                '<a href=https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '">' + 'https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '</a>' +
+                '<a href=https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '>' + 'https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '</a>' +
                 '<br><br>' +
                 '<p>--Team</p>'
         };
