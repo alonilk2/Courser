@@ -272,11 +272,7 @@ app.post('/signup', async (req, res) => {
               }
             });
             if(created) {
-              let tok = jwt.sign(
-                {user},
-                'manyplacees are awsome 4now',
-                {expiresIn: 129600}
-              );
+
               const mailOptions = {
                 from: 'techstar1team@gmail.com',
                 to: req.body.email,
@@ -304,8 +300,7 @@ app.post('/signup', async (req, res) => {
               res.json({
                 success: true,
                 error: null,
-                user: user,
-                tok
+                user: user
               });
             }
             else res.json({
