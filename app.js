@@ -351,6 +351,9 @@ app.post('/storePassword', async (req, res) => {
           console.log(token + " AND    " + userrecovery.dataValues.token)
           if(result){
             await bcrypt.hash(password, saltRounds, async function(error2, hash) {
+              const user = await db.users.findOne({
+                where: { id: userId }
+              });
               await db.users.update({ password: hash }, { where: { id: userId }});
               userrecovery.destroy({
                 where: {
@@ -359,7 +362,7 @@ app.post('/storePassword', async (req, res) => {
               })
               const mailOptions = {
                 from: 'techstar1team@gmail.com',
-                to: req.body.email,
+                to: user.dataValues.email,
                 subject: "Warning: Your password has changed",
                 text: "Note that your password has changed recently. If you didn't ask us to change it, please call us immediately."
               };
