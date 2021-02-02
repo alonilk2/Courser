@@ -287,58 +287,58 @@ app.post('/signup', async (req, res) => {
         await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
           token = crypto.randomBytes(32).toString('hex');
           await bcrypt.hash(token, saltRounds, async function(err, hashtok) {
-            const promo = await db.PromoCode.findOne({ where: {promocode: req.body.promo}});
-            if(promo){
-              const [user, created] = await db.users.findOrCreate({
-                where: { email: req.body.email },
-                defaults: {
-                  email: req.body.email,
-                  first_name: req.body.firstname,
-                  last_name: req.body.lastname,
-                  password: hash,
-                  active: 0,
-                  token: hashtok
+            if(req.body.promo){
+              const promo = await db.PromoCode.findOne({ where: {promocode: req.body.promo}});
+              if(!promo) res.json({
+                success: false,
+                error: 3 // 3 Means promocode wasnt found
+              }); 
+            }
+            const [user, created] = await db.users.findOrCreate({
+              where: { email: req.body.email },
+              defaults: {
+                email: req.body.email,
+                first_name: req.body.firstname,
+                last_name: req.body.lastname,
+                password: hash,
+                active: 0,
+                token: hashtok
+              }
+            });
+            if(created) {
+              const mailOptions = {
+                from: 'techstar1team@gmail.com',
+                to: req.body.email,
+                subject: "Welcome my friend!",
+                html: '<h4><b>Activate Account</b></h4>' +
+                '<p>To activate your account, please enter this URL:</p>' +
+                '<a href=https://techstar12.herokuapp.com/activate/' + user.id + '/' + token + '>' + 'https://techstar12.herokuapp.com/activate/' + user.id + '/' + token + '</a>' +
+                '<br><br>' +
+                '<p>--Team</p>'
+              };
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                  res.json({
+                    error: error,
+                    status: 0
+                  })
+                } else {
+                  res.json({
+                    success: true,
+                    message: info
+                  })
                 }
               });
-              if(created) {
-                const mailOptions = {
-                  from: 'techstar1team@gmail.com',
-                  to: req.body.email,
-                  subject: "Welcome my friend!",
-                  html: '<h4><b>Activate Account</b></h4>' +
-                  '<p>To activate your account, please enter this URL:</p>' +
-                  '<a href=https://techstar12.herokuapp.com/activate/' + user.id + '/' + token + '>' + 'https://techstar12.herokuapp.com/activate/' + user.id + '/' + token + '</a>' +
-                  '<br><br>' +
-                  '<p>--Team</p>'
-                };
-                transporter.sendMail(mailOptions, function(error, info){
-                  if (error) {
-                    console.log(error);
-                    res.json({
-                      error: error,
-                      status: 0
-                    })
-                  } else {
-                    res.json({
-                      success: true,
-                      message: info
-                    })
-                  }
-                });
-                res.json({
-                  success: true,
-                  error: null,
-                  user: user
-                });
-              }
-              else res.json({
-                success: false,
-                error: 0 // 0 Means user already registered.
-              }); 
-            } 
+              res.json({
+                success: true,
+                error: null,
+                user: user
+              });
+            }
             else res.json({
               success: false,
-              error: 3 // 3 Means promocode wasnt found
+              error: 0 // 0 Means user already registered.
             }); 
           });
         });
