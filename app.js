@@ -287,7 +287,7 @@ app.post('/signup', async (req, res) => {
         await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
           token = crypto.randomBytes(32).toString('hex');
           await bcrypt.hash(token, saltRounds, async function(err, hashtok) {
-            const promo = await db.PromoCodes.findOne({ where: {promocode: req.body.promo}});
+            const promo = await db.PromoCode.findOne({ where: {promocode: req.body.promo}});
             if(promo){
               const [user, created] = await db.users.findOrCreate({
                 where: { email: req.body.email },
