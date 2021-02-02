@@ -175,8 +175,6 @@ app.post('/updatePass', async (req, res) => {
           })
         }
       });
-      
-//***************        
     }
     else res.json({
       error: "error",
@@ -195,17 +193,25 @@ app.post('/signin', async (req, res) => {
     });
     await bcrypt.compare(req.body.password, user.dataValues.password, async function(err, result) {
       if(result == true) {
-        let tok = jwt.sign(
-          {user},
-          'manyplacees are awsome 4now',
-          {expiresIn: 129600}
-        );
-        res.json({
-          success: true,
-          error: null,
-          user: user,
-          tok,
-        });
+        if(user.active == 0){
+          res.json({ 
+            success: false,
+            error: 1
+          }); // 1 Means user was not activated.
+        }
+        else {
+          let tok = jwt.sign(
+            {user},
+            'manyplacees are awsome 4now',
+            {expiresIn: 129600}
+          );
+          res.json({
+            success: true,
+            error: null,
+            user: user,
+            tok,
+          });
+        }
       }
       else res.json({ 
         success: false,
@@ -219,55 +225,90 @@ app.post('/signin', async (req, res) => {
     })
   }
 });
+
+app.post('/approve_user', async (req, res) => {
+  try {
+    const userId = req.body.userid
+    const token = req.body.token
+    const user = await db.users.findOne({ where: {id: userId}});
+    if(user.dataValues){
+      try {
+        await bcrypt.compare(token, user.dataValues.token, async function (error1, result) {
+          if(result){
+            await db.users.update({ active: 1 }, { where: { id: userId }})
+            res.json({ success: true });
+          }
+          else {
+            console.log(error1); 
+            res.json({ success: false, error: 1});
+          }
+        })
+      } catch (error0) {
+        console.log(error0);
+        res.json({success: false, error: 2});
+      }
+    }
+  } catch (error) {
+    console.log(error); 
+    res.json({ success: false, error: 3 });
+  }
+});
+
 app.post('/signup', async (req, res) => {
     try{
       if(req.body){
         await bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
-          const [user, created] = await db.users.findOrCreate({
-            where: { email: req.body.email },
-            defaults: {
-              email: req.body.email,
-              first_name: req.body.firstname,
-              last_name: req.body.lastname,
-              password: hash }
-          });
-          if(created) {
-            let tok = jwt.sign(
-              {user},
-              'manyplacees are awsome 4now',
-              {expiresIn: 129600}
-            );
-            const mailOptions = {
-              from: 'techstar1team@gmail.com',
-              to: req.body.email,
-              subject: "Welcome To Techstars",
-              text: "Enjoy your new tech stars !!"
-            };
-            transporter.sendMail(mailOptions, function(error, info){
-              if (error) {
-                console.log(error);
-                res.json({
-                  error: error,
-                  status: 0
-                })
-              } else {
-                res.json({
-                  success: true,
-                  message: info
-                })
+          token = crypto.randomBytes(32).toString('hex');
+          await bcrypt.hash(token, saltRounds, async function(err, hashtok) {
+            const [user, created] = await db.users.findOrCreate({
+              where: { email: req.body.email },
+              defaults: {
+                email: req.body.email,
+                first_name: req.body.firstname,
+                last_name: req.body.lastname,
+                password: hash,
+                active: 0,
+                token: hashtok
               }
             });
-            res.json({
-              success: true,
-              error: null,
-              user: user,
-              tok
-            });
-          }
-          else res.json({
-            success: false,
-            error: 0 // 0 Means user already registered.
-          }); 
+            if(created) {
+              let tok = jwt.sign(
+                {user},
+                'manyplacees are awsome 4now',
+                {expiresIn: 129600}
+              );
+              const mailOptions = {
+                from: 'techstar1team@gmail.com',
+                to: req.body.email,
+                subject: "Welcome my friend!",
+                text: `Enjoy your new tech stars !! <br>Please enter this URL to activate your account: <a href=https://techstar12.herokuapp.com/activate/` + user.id + `/` + token + `>` + `https://techstar12.herokuapp.com/activate/` + user.id + `/` + token + `</a>`
+              };
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                  res.json({
+                    error: error,
+                    status: 0
+                  })
+                } else {
+                  res.json({
+                    success: true,
+                    message: info
+                  })
+                }
+              });
+              res.json({
+                success: true,
+                error: null,
+                user: user,
+                tok
+              });
+            }
+            else res.json({
+              success: false,
+              error: 0 // 0 Means user already registered.
+            }); 
+          });
         });
       }
       else res.json({
@@ -317,6 +358,26 @@ app.post('/storePassword', async (req, res) => {
                   userid: userId
                 }
               })
+              const mailOptions = {
+                from: 'techstar1team@gmail.com',
+                to: req.body.email,
+                subject: "Warning: Your password has changed",
+                text: "Note that your password has changed recently. If you didn't ask us to change it, please call us immediately."
+              };
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                  res.json({
+                    error: error,
+                    status: 0
+                  })
+                } else {
+                  res.json({
+                    success: true,
+                    message: info
+                  })
+                }
+              });
               res.json({ success: true })
             })
           }
