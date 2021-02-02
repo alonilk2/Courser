@@ -281,7 +281,11 @@ app.post('/signup', async (req, res) => {
                 from: 'techstar1team@gmail.com',
                 to: req.body.email,
                 subject: "Welcome my friend!",
-                text: `Enjoy your new tech stars !! <br>Please enter this URL to activate your account: <a href=https://techstar12.herokuapp.com/activate/` + user.id + `/` + token + `>` + `https://techstar12.herokuapp.com/activate/` + user.id + `/` + token + `</a>`
+                html: '<h4><b>Activate Account</b></h4>' +
+                '<p>To activate your account, please enter this URL:</p>' +
+                '<a href=https://techstar12.herokuapp.com/activate/' + user.id + '/' + token + '>' + 'https://techstar12.herokuapp.com/activate/' + user.id + '/' + token + '</a>' +
+                '<br><br>' +
+                '<p>--Team</p>'
               };
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
