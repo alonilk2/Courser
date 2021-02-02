@@ -133,7 +133,6 @@ app.post('/updatePass', async (req, res) => {
       const user = await db.users.findOne({
         where: { email: req.body.email }
       })
-      console.log(user);
       await bcrypt.compare(req.body.oldpass, user.dataValues.password, async function(err, result) {
         if(result == true){
           await bcrypt.hash(req.body.newpass, saltRounds, async function(err, hash) {
@@ -254,6 +253,34 @@ app.post('/approve_user', async (req, res) => {
   }
 });
 
+app.post('/approveEmail', async (req, res) => {
+  try {
+    const userId = req.body.userid
+    const token = req.body.token
+    const user = await db.users.findOne({ where: {id: userId}});
+    if(user.dataValues){
+      try {
+        await bcrypt.compare(token, user.dataValues.token, async function (error1, result) {
+          if(result){
+            await db.users.update({ email: user.dataValues.newemail }, { where: { id: userId }})
+            res.json({ success: true });
+          }
+          else {
+            console.log(error1); 
+            res.json({ success: false, error: 1});
+          }
+        })
+      } catch (error0) {
+        console.log(error0);
+        res.json({success: false, error: 2});
+      }
+    }
+  } catch (error) {
+    console.log(error); 
+    res.json({ success: false, error: 3 });
+  }
+});
+
 app.post('/signup', async (req, res) => {
     try{
       if(req.body){
@@ -339,6 +366,7 @@ app.post('/fetch_categories', async (req, res) => {
       })
   }
 })
+
 app.post('/storePassword', async (req, res) => {
   try {
     const userId = req.body.userid
@@ -348,7 +376,6 @@ app.post('/storePassword', async (req, res) => {
     if(userrecovery.dataValues){
       try {
         await bcrypt.compare(token, userrecovery.dataValues.token, async function (error1, result) {
-          console.log(token + " AND    " + userrecovery.dataValues.token)
           if(result){
             await bcrypt.hash(password, saltRounds, async function(error2, hash) {
               const user = await db.users.findOne({
@@ -398,6 +425,51 @@ app.post('/storePassword', async (req, res) => {
     res.json({ success: false, error: 3})
   }
 });
+
+
+app.post('/updateEmail', async (req, res) => {
+  try {
+    const user = await db.users.findOne({
+      where: { email: req.body.email }
+    });
+    token = crypto.randomBytes(32).toString('hex');
+    bcrypt.hash(token, saltRounds, async function (err, hash) {
+      await db.users.update({ token: hash, newemail: req.body.newemail }, { where: { email: req.body.email }});
+      try {
+        const mailOptions = {
+          from: 'techstar1team@gmail.com',
+          to: req.body.email,
+          subject: "Email Change Approval needed",
+          html: '<h4><b>Email Change</b></h4>' +
+                '<p>To change your email, please enter the URL below:</p>' +
+                '<a href=https://techstar12.herokuapp.com/updatemail/' + user.id + '/' + token + '>' + 'https://techstar12.herokuapp.com/updatemail/' + user.id + '/' + token + '</a>' +
+                '<br><br>' +
+                '<p>--Team</p>'
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+            res.json({
+              error: error,
+              status: 0
+            })
+          } else {
+            res.json({
+              success: true
+            })
+          }
+        });
+      } catch (error) {
+        console.log(error)
+        res.send(error)
+      }
+    });
+  } catch (error) {
+    console.log(error)
+    res.send(error)
+  }
+})
+
 app.post('/forgotPass', async (req, res) => {
   try {
     const user = await db.users.findOne({
@@ -419,11 +491,10 @@ app.post('/forgotPass', async (req, res) => {
           userid: user.id,
           token: hash
         }) 
-        console.log(recoveryentry);
         const mailOptions = {
           from: 'techstar1team@gmail.com',
           to: req.body.email,
-          subject: req.body.subject,
+          subject: "Reset Password",
           html: '<h4><b>Reset Password</b></h4>' +
                 '<p>To reset your password, complete this form:</p>' +
                 '<a href=https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '>' + 'https://techstar12.herokuapp.com/reset/' + user.id + '/' + token + '</a>' +
