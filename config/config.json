@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "nctpmqrschmsbv",
-    "password": "33191e536cd6b3d71cf803184d258d66f4b00d66b3b55dcb09f2ab28b530a28d",
-    "database": "d5ja5nt0lln25s",
-    "host": "ec2-52-211-161-21.eu-west-1.compute.amazonaws.com",
+    "username": "oskmoptbtbulut",
+    "password": "f3916ae0e847d53f8f0eac7f2895780365562ec37e0e1cd803013a75c4847512",
+    "database": "d5st004te1batj",
+    "host": "ec2-34-242-84-130.eu-west-1.compute.amazonaws.com",
 		"dialect":"postgres", 
 		"ssl":true, 
 		"dialectOptions":{ 
@@ -15,10 +15,10 @@
 
   },
   "test": {
-    "username": "nctpmqrschmsbv",
-    "password": "33191e536cd6b3d71cf803184d258d66f4b00d66b3b55dcb09f2ab28b530a28d",
-    "database": "d5ja5nt0lln25s",
-	"host": "ec2-52-211-161-21.eu-west-1.compute.amazonaws.com",
+    "username": "oskmoptbtbulut",
+    "password": "f3916ae0e847d53f8f0eac7f2895780365562ec37e0e1cd803013a75c4847512",
+    "database": "d5st004te1batj",
+	"host": "ec2-34-242-84-130.eu-west-1.compute.amazonaws.com",
 	"dialect":"postgres", 
 		"ssl":true, 
 		"dialectOptions":{ 
@@ -29,10 +29,10 @@
 		}
   },
   "production": {
-    "username": "nctpmqrschmsbv",
-    "password": "33191e536cd6b3d71cf803184d258d66f4b00d66b3b55dcb09f2ab28b530a28d",
-    "database": "d5ja5nt0lln25s",
-	"host": "ec2-52-211-161-21.eu-west-1.compute.amazonaws.com",
+    "username": "oskmoptbtbulut",
+    "password": "f3916ae0e847d53f8f0eac7f2895780365562ec37e0e1cd803013a75c4847512",
+    "database": "d5st004te1batj",
+	"host": "ec2-34-242-84-130.eu-west-1.compute.amazonaws.com",
 		"dialect":"postgres", 
 		"ssl":true, 
 		"dialectOptions":{ 
