@@ -1,5 +1,19 @@
-# Techstar1
+# Courser - Courses Management System
 
-# URL: https://techstar12.herokuapp.com/
+# URL: https://coursemanagement-braude.herokuapp.com
 
-A preview website made using React.JS, PostgreSQL, Heroku and Node.JS as an assignment for "Client-Server Communtication" course.
+![Courser](https://alonilk2.github.io/map1/courser.png)
+
+
+Courser is a course management system for teachers and tutors, allowing to create and manage courses, manage students list for each course, add/delete grades, add/delete tasks and assignments for each course and more.
+
+Courser was built using:
+React.js
+Node.js
+PostgreSQL
+Express.js
+Sequelize.js
+Material UI
+
+
+
