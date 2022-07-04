@@ -110,7 +110,7 @@ app.post("/signup", async (req, res) => {
                 active: 0,
                 token: hashtok,
                 admin: false,
-                idnumber: req.body.ID
+                idnumber: req.body.ID,
               },
             });
             if (created) {
@@ -154,7 +154,7 @@ app.post("/course", async (req, res) => {
       course: course,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.json({
       success: false,
       error: error,
@@ -164,16 +164,42 @@ app.post("/course", async (req, res) => {
 
 app.get("/course/:id", async (req, res) => {
   try {
-    const courseList = await db.course.findAll({
-      where: {
-        userId: req.params.id,
-      },
-    });
-    res.json({
-      success: true,
-      course: courseList,
-    });
+
+    const user = await db.users.findOne({where: {
+      id: req.params.id
+    }})
+    if(user && user.dataValues.admin){
+      const courseList = await db.course.findAll({
+        where: {
+          userId: req.params.id,
+        },
+      });
+      res.json({
+        success: true,
+        course: courseList,
+      });
+    } else {
+      const student = await db.students.findOne({where: {
+        idnumber: user.idnumber
+      }})
+
+      const courseList = await db.course.findAll({
+        include: {
+          model: db.students,
+          where: {
+            id: student.id
+          }
+        },
+      });
+      res.json({
+        success: true,
+        course: courseList,
+      });
+    }
+
+
   } catch (error) {
+    console.log(error)
     res.json({
       success: false,
       error: error,
