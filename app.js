@@ -4,12 +4,9 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
-var multer = require("multer");
-const uploadpath = "uploads";
 const db = require("./models/index.js");
 const exjwt = require("express-jwt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const crypto = require("crypto");
@@ -42,32 +39,10 @@ app.use(function (req, res, next) {
 });
 
 app.use(express.static("public"));
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.get("/uploads/:imgname", (req, res) => {
-  res.sendFile(path.join(__dirname, "uploads", req.params.imgname));
-});
+
 const jwtMW = exjwt({
   secret: "manyplacees are awsome 4now",
   algorithms: ["RS256"],
-});
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadpath);
-  },
-  filename: (req, file, cb) => {
-    console.log(file);
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + file.originalname.match(/\..*$/)[0]
-    );
-  },
-});
-
-
-const upload = multer({
-  storage,
 });
 
 app.post("/signin", async (req, res) => {
@@ -310,12 +285,12 @@ app.delete("/grade/:id", async (req, res) => {
   }
 });
 
-app.post("/tasks", upload.single("file"), async (req, res) => {
+app.post("/tasks", async (req, res) => {
   try {
     const task = await db.tasks.create({
       name: req.body.name,
       courseId: req.body.courseId,
-      filename: req.file.filename,
+      filename: req.body.file,
     });
 
     const tasks = await db.tasks.findAll({
@@ -329,7 +304,6 @@ app.post("/tasks", upload.single("file"), async (req, res) => {
       tasks: tasks,
     });
   } catch (error) {
-    console.log(error);
     res.json({
       success: false,
       error: error,
@@ -344,14 +318,11 @@ app.get("/tasks/:id", async (req, res) => {
         courseId: req.params.id,
       },
     });
-    console.log(tasksList);
     res.json({
       success: true,
       tasks: tasksList,
     });
   } catch (error) {
-    console.log(error);
-
     res.json({
       success: false,
       error: error,
