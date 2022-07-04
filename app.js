@@ -319,6 +319,7 @@ app.post("/tasks", async (req, res) => {
       name: req.body.name,
       courseId: req.body.courseId,
       filename: req.body.file,
+      filesolutions: [].toString()
     });
 
     const tasks = await db.tasks.findAll({
@@ -338,6 +339,31 @@ app.post("/tasks", async (req, res) => {
     });
   }
 });
+
+app.post("/tasks/solution", async (req, res) => {
+  try {
+    const task = await db.tasks.findOne({
+      where: {
+        courseId: req.body.courseId,
+      },
+    });
+
+    task.update({
+      filesolutions: req.body.filesolutions.toString()
+    });
+
+    return res.json({
+      success: true
+    });
+  } catch (error) {
+    console.log(error)
+    res.json({
+      success: false,
+      error: error,
+    });
+  }
+});
+
 
 app.get("/tasks/:id", async (req, res) => {
   try {

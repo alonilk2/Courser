@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   tasks.init({
     name: DataTypes.STRING,
-    filename: DataTypes.STRING
+    filename: DataTypes.STRING,
+    filesolutions: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'tasks',

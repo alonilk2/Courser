@@ -14,6 +14,9 @@ module.exports = {
       filename: {
         type: Sequelize.STRING
       },
+      filesolutions: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
