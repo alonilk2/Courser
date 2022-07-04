@@ -109,6 +109,8 @@ app.post("/signup", async (req, res) => {
                 password: hash,
                 active: 0,
                 token: hashtok,
+                admin: false,
+                idnumber: req.body.ID
               },
             });
             if (created) {
