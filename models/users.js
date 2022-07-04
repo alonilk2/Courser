@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     active: DataTypes.INTEGER,
     token: DataTypes.STRING,
     newemail: DataTypes.STRING,
+    idnumber: DataTypes.STRING,
     admin: DataTypes.BOOLEAN
   }, {
     sequelize,

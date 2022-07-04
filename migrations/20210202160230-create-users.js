@@ -32,6 +32,9 @@ module.exports = {
       admin: {
         type: Sequelize.BOOLEAN
       },
+      idnumber: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
