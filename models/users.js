@@ -18,16 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     email: DataTypes.STRING,
-    promocode: DataTypes.STRING,
-    phonenumber: DataTypes.STRING,
-    country: DataTypes.STRING,
-    city: DataTypes.STRING,
-    street: DataTypes.STRING,
-    zipcode: DataTypes.STRING,
     password: DataTypes.STRING,
     active: DataTypes.INTEGER,
     token: DataTypes.STRING,
-    newemail: DataTypes.STRING
+    newemail: DataTypes.STRING,
+    admin: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'users',

@@ -17,24 +17,6 @@ module.exports = {
       email: {
         type: Sequelize.STRING
       },
-      promocode: {
-        type: Sequelize.STRING
-      },
-      phonenumber: {
-        type: Sequelize.STRING
-      },
-      country: {
-        type: Sequelize.STRING
-      },
-      city: {
-        type: Sequelize.STRING
-      },
-      street: {
-        type: Sequelize.STRING
-      },
-      zipcode: {
-        type: Sequelize.STRING
-      },
       password: {
         type: Sequelize.STRING
       },
@@ -46,6 +28,9 @@ module.exports = {
       },
       newemail: {
         type: Sequelize.STRING
+      },
+      admin: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
