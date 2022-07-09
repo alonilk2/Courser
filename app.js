@@ -193,7 +193,7 @@ app.get("/course/:id", async (req, res) => {
           course: courseList,
         });
       }
-      res.json({
+      else res.json({
         success: false
       })
     }
