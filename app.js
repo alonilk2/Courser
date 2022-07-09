@@ -81,8 +81,6 @@ app.post("/signin", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   try {
-    console.log(req);
-
     if (req.body) {
       await bcrypt.hash(
         req.body.password,
@@ -163,8 +161,7 @@ app.post("/course", async (req, res) => {
 });
 
 app.get("/course/:id", async (req, res) => {
-  try {
-
+  try { 
     const user = await db.users.findOne({where: {
       id: req.params.id
     }})
@@ -182,19 +179,23 @@ app.get("/course/:id", async (req, res) => {
       const student = await db.students.findOne({where: {
         idnumber: user.idnumber
       }})
-
-      const courseList = await db.course.findAll({
-        include: {
-          model: db.students,
-          where: {
-            id: student.id
-          }
-        },
-      });
+      if(student){
+        const courseList = await db.course.findAll({
+          include: {
+            model: db.students,
+            where: {
+              id: student.id
+            }
+          },
+        });
+        res.json({
+          success: true,
+          course: courseList,
+        });
+      }
       res.json({
-        success: true,
-        course: courseList,
-      });
+        success: false
+      })
     }
 
 
